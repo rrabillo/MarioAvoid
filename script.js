@@ -1,16 +1,36 @@
 $(document).ready(function(){
-	var gravityValue = 5;
+	var gravityValue = 200;
 	var mario = $('#personnage');
 	var personne = function(selector){
-		$(selector).css({'top':gravity(gravityValue)});
-	}
-	var personne1 = new personne(mario);
+		if(selector.position().top < $(document).height()){
+			gravity(selector);
+		}
 
-	function gravity(value){
-		setInterval(function() {
-       		value++;
-		}, 100);
-		return(value);
+		personne.prototype.jump = function() {
+			console.log('ok');
+		  	selector.animate({
+			top: "-=25px"
+			}, gravityValue);
+			gravity(selector);
+		}
 	}
-	gravity(gravityValue);
+	var joueur = new personne(mario);
+	function gravity(selector){
+		selector.animate({
+			top: $(document).height() - selector.height() - 15
+		}, gravityValue);
+	}
+	document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            break;
+        case 38:
+        	joueur.jump();
+            break;
+        case 39:
+            break;
+        case 40:
+            break;
+    }
+};
 });
