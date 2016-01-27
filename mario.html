@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="no-js" lang="fr">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Mario</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<style type="text/css">
+
+	@-webkit-keyframes walking-right {
+		0% { background-image: url('./mario2.png');}
+		100% { background-image: url('./mario3.png');}
+	}
+	@-webkit-keyframes walking-left {
+		0% { background-image: url('./mario5.png');}
+		100% { background-image: url('./mario6.png');}
+	}
+	
+	body{
+		position: relative;
+	}
+	#mario{
+		height: 47px;
+		width: 31px;
+
+		background-image: url('./mario1.png');
+		background-repeat: no-repeat;
+
+		position: absolute;
+
+		-webkit-animation: move-to-right .5s 0s linear infinite;
+	}
+
+</style>
+
+<body>
+
+	<div id="mario"></div>
+
+</body>
+
+<script type="text/javascript">
+
+$(function(){	
+	
+	function move_right(){
+
+		var position = document.getElementById('mario').offsetLeft,
+			new_position = position + 15;
+			console.log(position);
+			console.log(new_position);
+
+		/*document.getElementById('mario').css('left', new_position+'px');*/
+
+	}
+	move_right();
+
+});
+
+</script>
+
+</html>
