@@ -4,7 +4,7 @@ $(document).ready(function(){
 // Construction de la logique 
 
 
-var underGravity = []; // Création d'un array qui contiendrat les objets soumis à la gravité
+var underGravity = []; // Création d'un array qui contiendra les objets soumis à la gravité
 
 zoneDeJeu = function(selector){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
@@ -13,12 +13,15 @@ zoneDeJeu = function(selector){// Définition d'un objet "zone de jeu", qui nous
 	zoneDeJeu.prototype.gravity = function(){ // Ok la ça va être chaud EDIT : Wouhou j'ai réussi					
 		for(i = 0; i < underGravity.length; i++){
 			var object = underGravity[i];
-			if(object.htmlElement.offsetTop < this.height - object.htmlElement.offsetHeight){
-				object.pos.y += 5;
-				object.htmlElement.style.top = object.pos.y+"px"; 
-			}else if(object.htmlElement.offsetTop >= this.height){
-				object.pos.y = this.height - object.htmlElement.offsetHeight;
-				object.htmlElement.style.top = object.pos.y+"px"
+			if(!object.jump()){
+				if(object.htmlElement.offsetTop < this.height - object.htmlElement.offsetHeight){
+					object.pos.y += 5;
+					object.htmlElement.style.top = object.pos.y+"px"; 
+				}else if(object.htmlElement.offsetTop >= this.height - object.htmlElement.offsetHeight){
+					object.pos.y = this.height - object.htmlElement.offsetHeight;
+					object.htmlElement.style.top = object.pos.y+"px";
+					
+				}
 			}
 		}
 	}
@@ -26,8 +29,10 @@ zoneDeJeu = function(selector){// Définition d'un objet "zone de jeu", qui nous
 joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
+	this.height = selector.offsetHeight;
 	this.velocity = speed;
 	this.pos = {x : 0 , y : 0};
+	this.falling = true;
 	joueur.prototype.move = function() { // Méthode pour bouger à gauche et à droite
 		if (key.right === true) { // Si on appui sur la fleche de droite, on incremente la propriété css "left" par la vitesse passée à l'objet
         	this.pos.x += this.velocity;
@@ -42,6 +47,16 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
     		this.pos.x = area.htmlElement.offsetWidth - this.width;
     	}
     	this.htmlElement.style.left = this.pos.x+"px";
+	}
+	joueur.prototype.jump = function(){
+		if(key.up === true){
+				console.log(this.pos.y);
+				this.pos.y -= 5;
+				this.htmlElement.style.top = this.pos.y+"px";
+				this.falling = false;
+				return true;
+			
+		}
 	}
 	underGravity.push(this);
 
@@ -82,6 +97,7 @@ document.addEventListener('keyup', keyUp, false);
 function loop(){
 	area.gravity();
 	mario.move();
+	mario.jump();
 }
 setInterval(loop,15);
 });
