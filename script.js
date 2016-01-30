@@ -15,11 +15,13 @@ zoneDeJeu = function(selector){// Définition d'un objet "zone de jeu", qui nous
 			var object = underGravity[i];
 			if(!object.jump()){
 				if(object.htmlElement.offsetTop < this.height - object.htmlElement.offsetHeight){
-					object.pos.y += 5;
+					object.pos.y += 20;
 					object.htmlElement.style.top = object.pos.y+"px"; 
+					object.falling = true;
 				}else if(object.htmlElement.offsetTop >= this.height - object.htmlElement.offsetHeight){
 					object.pos.y = this.height - object.htmlElement.offsetHeight;
 					object.htmlElement.style.top = object.pos.y+"px";
+					object.falling = false;
 					
 				}
 			}
@@ -32,7 +34,8 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.height = selector.offsetHeight;
 	this.velocity = speed;
 	this.pos = {x : 0 , y : 0};
-	this.falling = true;
+	this.falling = true; // Pour empécher le saut alors que le personnage est en l'air
+	this.maximumJump =250;
 	joueur.prototype.move = function() { // Méthode pour bouger à gauche et à droite
 		if (key.right === true) { // Si on appui sur la fleche de droite, on incremente la propriété css "left" par la vitesse passée à l'objet
         	this.pos.x += this.velocity;
@@ -49,13 +52,15 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
     	this.htmlElement.style.left = this.pos.x+"px";
 	}
 	joueur.prototype.jump = function(){
-		if(key.up === true){
-				console.log(this.pos.y);
-				this.pos.y -= 5;
+		i = area.height - this.maximumJump ;
+		console.log(i);
+		if(key.up === true && this.falling == false){
+				while (this.pos.y  > i){		
+				this.pos.y -= 1;
 				this.htmlElement.style.top = this.pos.y+"px";
 				this.falling = false;
 				return true;
-			
+				}
 		}
 	}
 	underGravity.push(this);
