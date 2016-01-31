@@ -4,13 +4,38 @@ body{
 	overflow: hidden;
 }
 #personnage{
-	width: 10px;
-	height: 20px;
-	background:black;
+	height: 47px;
+	width: 35px;
+	background-image: url('images/mario1.png');
+	background-repeat: no-repeat;
 	position: relative;
 	bottom: 0;
 	display: inline-block;
 }
+.walking-right{
+	-webkit-animation: walking 500ms steps(1, end)  infinite;
+
+}
+.walking-left{
+	transform: scaleX(-1);
+	-webkit-animation: walking 500ms steps(1, end)  infinite;
+}
+.reverse{
+	transform: scaleX(-1);
+}
+#personnage.jump{
+	background-image: url('images/mario5.png');	
+}
+#personnage.fall{
+	background-image:url('images/mario6.png');
+}
+@-webkit-keyframes walking {
+		0% { background-image: url('images/mario2.png');}
+		33% { background-image: url('images/mario3.png');}
+		66% { background-image: url('images/mario4.png');}
+		100% { background-image: url('images/mario3.png');}
+}
+
 #sol{
 	position: absolute;
 	background: green;
