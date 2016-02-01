@@ -7,7 +7,23 @@ body{
 	background-size: 960px 100%;
 	background-origin: padding-box, content-box;
 	height: 100vh;
-	-webkit-animation: background 5s linear infinite;
+	-webkit-animation: background 30s linear infinite;
+}
+#score{
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	background-image: url('images/score.png');
+	background-repeat: no-repeat;
+	height: 100px;
+	width: 100px;
+}
+#timer{
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	height: 50px;
+	width: 200px;
 }
 #sol{
 	position: absolute;
@@ -16,6 +32,15 @@ body{
 	right: 0;
 	background-image: url('images/bg-sol.jpg');
 	height: 72px;
+}
+#decor{
+	position: absolute;
+	bottom: 72px;
+	left: 0;
+	right: 0;
+	background-image: url('images/decor.png');
+	background-repeat: no-repeat;
+	height: 50px;
 }
 #personnage{
 	height: 47px;
