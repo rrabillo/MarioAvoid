@@ -1,2 +1,2 @@
 # animation
-Interactive animation do in school using javascript and css
+Interactive animation (its more like becoming a game now) made for school

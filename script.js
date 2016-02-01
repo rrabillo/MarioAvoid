@@ -44,7 +44,7 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 	this.sol = ground;
 	this.leftBorder = selector.offsetLeft;	
 	this.height = selector.offsetHeight;
-	this.touched = true;
+	this.touched = true; // Variable pour détecter les collisions (empéche de décrémenter la vie tant qu'on est en collision)
 	zoneDeJeu.prototype.gravity = function(){				
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
@@ -72,16 +72,16 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 				elLeft = obstacle[i].posX,
 				elRight = elLeft + elwidth,
 				elBottom = elTop + elheight;
-				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){
-					if(this.touched  === false){
+				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){ // Détection de la collision
+					if(this.touched  === false){ // On regarde tout d'abords si on a déjà touché un obstacle
 					}
-					else{
+					else{ // La première fois qu'on le touche, on enlève une vie.
 						object.life -= 1;
-						this.touched  = false;
+						this.touched  = false; // Et on remet touched à false pour empêcher que la vie se décremente tant qu'on touche l'objet
 					}
 				}
 				else{
-					this.touched = true;
+					this.touched = true; // Quand on ne touche plus l'objet, on réinitialise à true, pour le prochain objet rencontré
 				}
 				
 			}
