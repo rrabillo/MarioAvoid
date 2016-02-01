@@ -46,24 +46,56 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 
 	}
 }
-	while(document.getElementsByClassName('bullet-bill').length < 3){
-  			$('body').append('<div class="bullet-bill"></div>');
-	}	
-obstacle = function(selector){
+	
+/*obstacle = function(selector){
 	this.status = true; // Si l'objet a disparu ou non
 	this.htmlElement = selector;
 	for(i = 0; i < selector.length; i++){
 		this.height = selector[i].offsetHeight;
 		this.width = selector[i].offsetWidth;
 	}
-	this.pos = {x : area.htmlElement.offsetWidth - this.width , y : 0}; 
-
+	this.pos = {x : area.htmlElement.offsetWidth - this.width , y : area.sol.offsetTop - 15}; 
 	obstacle.prototype.move = function(){
 		this.pos.x -= 5;
+		this.htmlElement[0].style.top = this.pos.y+"px";
 		this.htmlElement[0].style.left = this.pos.x+"px";
+		if(this.pos.x <= area.leftBorder){
+		}
 	}
 
-} 
+} */
+function generatePos(min , max){
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+function getRandomInt(min, max) {
+  	/*console.log(Math.floor(Math.random() * (max - min)) + min);*/
+}
+
+obstacle = [];
+function prepareObstacle(){
+	for(obstacleId = 0; obstacleId < document.getElementsByClassName('bullet-bill').length; obstacleId++){
+		pos = generatePos(sol.offsetTop -10 , sol.offsetTop-50);
+		obstacle[obstacleId] = {id: obstacleId, selector : document.getElementsByClassName('bullet-bill')[obstacleId ] , width : $(this).width() , 
+		height : $(this).height() , posY : pos , posX : document.getElementsByClassName('bullet-bill')[obstacleId].offsetLeft};
+	}
+}
+function addObstacle(){
+		$('body').append('<div class="bullet-bill"></div>');
+		prepareObstacle();
+}
+addObstacle();
+function obstacleMove(){
+	for(i = 0; i < obstacle.length; i++){
+		obstacle[i].posX -=10;
+		obstacle[i].selector.style.top =  obstacle[i].posY+"px"; 
+		obstacle[i].selector.style.left = obstacle[i].posX+"px";
+		if(obstacle[i].posX <= area.htmlElement.offsetLeft){
+			obstacle[i].selector.parentNode.removeChild(obstacle[i].selector);
+			obstacle = [];
+			addObstacle();		
+		}
+	}
+}
 joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
@@ -150,11 +182,9 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 
 mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
 area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
+/*
 bulletbill = new obstacle(document.getElementsByClassName("bullet-bill"));
-console.log(bulletbill);
-function getRandomInt(min, max) {
-  	/*console.log(Math.floor(Math.random() * (max - min)) + min);*/
-}
+*/
 // Contrôles
 var key  = { // On créé un objet clef qui permettra d'enregistrer de détecter si une touche est enfoncée ou non (et la détection de plusieurs touches enfoncées)
 	left:false,
@@ -195,7 +225,7 @@ function loop(){
 	area.collisions();
 	area.gravity();
 	mario.move();
-	bulletbill.move();
+	obstacleMove()
 }
  gameloop = setInterval(loop,15);
 

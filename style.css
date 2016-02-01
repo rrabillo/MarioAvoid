@@ -49,7 +49,7 @@ body{
 	height: 15px;
 	position: absolute;
 	top:50%;
-	left: 50%;
+	left: 99%;
 	transform:scaleX(-1);
 	background-image: url('images/bullet-bill1.png');
 	-webkit-animation: bullet-bill 500ms steps(1, end)  infinite;
