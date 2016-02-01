@@ -70,9 +70,11 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 				elLeft = obstacle[i].posX,
 				elRight = elLeft + elwidth,
 				elBottom = elTop + elheight;
-				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y ){
-					console.log('ok');
-				}	
+				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){
+					
+				}
+				
+
 			}
 		}	
 	}
@@ -99,6 +101,8 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
 	this.height = selector.offsetHeight;
+	this.life = 5;
+	this.touched = 0;
 	this.velocity = speed;
 	this.collision = false;
 	this.pos = {x : 0 , y : 0};
