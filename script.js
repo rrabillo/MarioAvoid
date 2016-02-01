@@ -5,7 +5,38 @@ $(document).ready(function(){
 
 
 var underPhysics = []; // Création d'un array qui contiendra les objets soumis à la gravité
-var test = document.getElementById("sol")
+obstacle = [];
+function generatePos(min , max){
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+function getRandomInt(min, max) {
+  	/*console.log(Math.floor(Math.random() * (max - min)) + min);*/
+}
+
+function prepareObstacle(){
+	for(obstacleId = 0; obstacleId < document.getElementsByClassName('bullet-bill').length; obstacleId++){
+		pos = generatePos(sol.offsetTop -10 , sol.offsetTop-50);
+		obstacle[obstacleId] = {id: obstacleId, selector : document.getElementsByClassName('bullet-bill')[obstacleId ] , width : document.getElementsByClassName('bullet-bill')[obstacleId].offsetWidth , 
+		height : document.getElementsByClassName('bullet-bill')[obstacleId].offsetHeight , posY : pos , posX : document.getElementsByClassName('bullet-bill')[obstacleId].offsetLeft};
+	}
+}
+function addObstacle(){
+		$('body').append('<div class="bullet-bill"></div>');
+		prepareObstacle();
+}
+addObstacle();
+function obstacleMove(){
+	for(i = 0; i < obstacle.length; i++){
+		obstacle[i].posX -=10;
+		obstacle[i].selector.style.top =  obstacle[i].posY+"px"; 
+		obstacle[i].selector.style.left = obstacle[i].posX+"px";
+		if(obstacle[i].posX <= area.htmlElement.offsetLeft){
+			obstacle[i].selector.parentNode.removeChild(obstacle[i].selector);
+			obstacle = [];
+			addObstacle();		
+		}
+	}
+}
 zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
 	this.sol = ground;
@@ -29,21 +60,20 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 		}
 	}
 	zoneDeJeu.prototype.collisions = function(){
-		var elwidth = test.offsetWidth,
-		elheight = test.offsetHeight,
-		elTop = test.offsetTop,
-		elLeft = test.offsetLeft,
-		elRight = elLeft + elwidth,
-		elBottom = elTop + elheight;
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
-			if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y ){
-				
+			for(i = 0; i < obstacle.length; i++){
+				var elwidth = obstacle[i].width,
+				elheight = obstacle[i].height,
+				elTop = obstacle[i].posY,
+				elLeft = obstacle[i].posX,
+				elRight = elLeft + elwidth,
+				elBottom = elTop + elheight;
+				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y ){
+					console.log('ok');
+				}	
 			}
-			
-			
-		}
-
+		}	
 	}
 }
 	
@@ -64,38 +94,6 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 	}
 
 } */
-function generatePos(min , max){
-	return Math.floor(Math.random() * (max - min)) + min;
-}
-function getRandomInt(min, max) {
-  	/*console.log(Math.floor(Math.random() * (max - min)) + min);*/
-}
-
-obstacle = [];
-function prepareObstacle(){
-	for(obstacleId = 0; obstacleId < document.getElementsByClassName('bullet-bill').length; obstacleId++){
-		pos = generatePos(sol.offsetTop -10 , sol.offsetTop-50);
-		obstacle[obstacleId] = {id: obstacleId, selector : document.getElementsByClassName('bullet-bill')[obstacleId ] , width : $(this).width() , 
-		height : $(this).height() , posY : pos , posX : document.getElementsByClassName('bullet-bill')[obstacleId].offsetLeft};
-	}
-}
-function addObstacle(){
-		$('body').append('<div class="bullet-bill"></div>');
-		prepareObstacle();
-}
-addObstacle();
-function obstacleMove(){
-	for(i = 0; i < obstacle.length; i++){
-		obstacle[i].posX -=10;
-		obstacle[i].selector.style.top =  obstacle[i].posY+"px"; 
-		obstacle[i].selector.style.left = obstacle[i].posX+"px";
-		if(obstacle[i].posX <= area.htmlElement.offsetLeft){
-			obstacle[i].selector.parentNode.removeChild(obstacle[i].selector);
-			obstacle = [];
-			addObstacle();		
-		}
-	}
-}
 joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
@@ -221,11 +219,11 @@ document.addEventListener('keyup', keyUp, false);
 
 	mario.jump();
 // Il est nécéssaire de créer une loop pour que les fonctions soient lancées constamment
-function loop(){
+function loop(){	
+	obstacleMove()
 	area.collisions();
 	area.gravity();
 	mario.move();
-	obstacleMove()
 }
  gameloop = setInterval(loop,15);
 
