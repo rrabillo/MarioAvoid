@@ -6,6 +6,7 @@ $(document).ready(function(){
 
 var underPhysics = []; // Création d'un array qui contiendra les objets soumis à la gravité
 obstacle = [];
+coin = [];
 function generatePos(min , max){
 	return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -218,12 +219,39 @@ document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
 
 	mario.jump();
+
+function prepareCoin(){
+	for(coinId = 0; coinId < document.getElementsByClassName('coin').length; coinId++){
+		pos = generatePos(sol.offsetTop -80 , sol.offsetTop -140);
+		coin[coinId] = {id: coinId, selector : document.getElementsByClassName('coin')[coinId ] , width : document.getElementsByClassName('coin')[coinId].offsetWidth , 
+		height : document.getElementsByClassName('coin')[coinId].offsetHeight , posY : pos , posX : document.getElementsByClassName('coin')[coinId].offsetLeft};
+	}
+}
+function addCoin(){
+		$('body').append('<div class="coin"></div>');
+		prepareCoin();
+}
+addCoin();
+function coinMove(){
+	for(i = 0; i < coin.length; i++){
+		coin[i].posX -=5;
+		coin[i].selector.style.top =  coin[i].posY+"px"; 
+		coin[i].selector.style.left = coin[i].posX+"px";
+		if(coin[i].posX <= area.htmlElement.offsetLeft){
+			coin[i].selector.parentNode.removeChild(coin[i].selector);
+			coin = [];
+			addCoin();		
+		}
+	}
+}
+
 // Il est nécéssaire de créer une loop pour que les fonctions soient lancées constamment
 function loop(){	
 	obstacleMove()
 	area.collisions();
 	area.gravity();
 	mario.move();
+	coinMove();
 }
  gameloop = setInterval(loop,15);
 
@@ -239,7 +267,8 @@ $('body').click(function(){ // Fonction de pause
 	}
 });
 
-var secon=0,
+
+/*var secon=0,
 	minu=0;
 
 function chrono(){
@@ -252,7 +281,7 @@ function chrono(){
 	document.getElementById('minute').innerHTML = ""+minu;
 	compte = setTimeout('chrono()',1000);
 }
-chrono();
+chrono();*/
 
 
 });
