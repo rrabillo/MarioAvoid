@@ -38,11 +38,13 @@ function obstacleMove(){
 		}
 	}
 }
+
 zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
 	this.sol = ground;
 	this.leftBorder = selector.offsetLeft;	
 	this.height = selector.offsetHeight;
+	this.touched = true;
 	zoneDeJeu.prototype.gravity = function(){				
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
@@ -71,12 +73,19 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 				elRight = elLeft + elwidth,
 				elBottom = elTop + elheight;
 				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){
-					
+					if(this.touched  === false){
+					}
+					else{
+						object.life -= 1;
+						this.touched  = false;
+					}
+				}
+				else{
+					this.touched = true;
 				}
 				
-
 			}
-		}	
+		}console.log(object.life);	
 	}
 }
 	
@@ -102,7 +111,6 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.width = selector.offsetWidth;
 	this.height = selector.offsetHeight;
 	this.life = 5;
-	this.touched = 0;
 	this.velocity = speed;
 	this.collision = false;
 	this.pos = {x : 0 , y : 0};
