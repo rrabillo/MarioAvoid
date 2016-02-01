@@ -9,12 +9,12 @@
 <style type="text/css">
 
 	@-webkit-keyframes walking-right {
-		0% { background-image: url('./mario2.png');}
-		100% { background-image: url('./mario3.png');}
+		0% { background-image: url('./images/mario2.png');}
+		100% { background-image: url('./images/mario3.png');}
 	}
 	@-webkit-keyframes walking-left {
-		0% { background-image: url('./mario5.png');}
-		100% { background-image: url('./mario6.png');}
+		0% { background-image: url('./images/mario7.png');}
+		100% { background-image: url('./images/mario8.png');}
 	}
 	
 	body{
@@ -24,13 +24,18 @@
 		height: 47px;
 		width: 31px;
 
-		background-image: url('./mario1.png');
+		background-image: url('./images/mario1.png');
 		background-repeat: no-repeat;
 
-		position: absolute;
-
-		-webkit-animation: move-to-right .5s 0s linear infinite;
+		position: absolute;		
 	}
+	.right{
+		-webkit-animation: walking-right .7s 0s linear infinite;
+	}
+	.left{
+		-webkit-animation: walking-left .7s 0s linear infinite;
+	}
+
 
 </style>
 
@@ -44,17 +49,44 @@
 
 $(function(){	
 	
+	var mario = document.getElementById('mario'),
+		position = document.getElementById('mario').offsetLeft;
+
 	function move_right(){
+		var mario = document.getElementById('mario'),
+			position = document.getElementById('mario').offsetLeft,
+			new_position = position + 15;	
 
-		var position = document.getElementById('mario').offsetLeft,
-			new_position = position + 15;
-			console.log(position);
-			console.log(new_position);
-
-		/*document.getElementById('mario').css('left', new_position+'px');*/
-
+		mario.setAttribute("class", "right");	
+		mario.style.left = new_position+"px";
+		setTimeout('mario.setAttribute("class", "")', 800);
 	}
-	move_right();
+
+	function move_left(){
+		var mario = document.getElementById('mario'),
+			position = document.getElementById('mario').offsetLeft,
+			new_position = position - 15;	
+
+		mario.setAttribute("class", "left");	
+		mario.style.left = new_position+"px";
+		setTimeout('mario.setAttribute("class", "")', 800);
+	}
+
+	document.addEventListener('keydown', function (e){
+
+		var x = e.keyCode;
+
+	    if(x == 39) {
+	    	
+			move_right();
+			
+
+	    } else if(x == 37) {
+
+			move_left();
+
+	    }
+	});
 
 });
 
