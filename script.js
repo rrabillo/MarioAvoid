@@ -231,11 +231,28 @@ function loop(){
 $('body').click(function(){ // Fonction de pause
 	if($(this).hasClass('paused')){
 		$(this).removeClass('paused');
-		gameloop=setInterval(loop,15);;
+		gameloop=setInterval(loop,15);
 	}
 	else{
 		$(this).addClass('paused');
 		clearInterval(gameloop);
 	}
 });
+
+var secon=0,
+	minu=0;
+
+function chrono(){
+
+	secon++;
+
+	if (secon>59){ secon=0; minu++ } 
+
+	document.getElementById('seconde').innerHTML = ""+secon;
+	document.getElementById('minute').innerHTML = ""+minu;
+	compte = setTimeout('chrono()',1000);
+}
+chrono();
+
+
 });

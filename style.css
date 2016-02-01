@@ -1,3 +1,26 @@
+
+@-webkit-keyframes walking {
+	0% { background-image: url('images/mario2.png');}
+	33% { background-image: url('images/mario3.png');}
+	66% { background-image: url('images/mario4.png');}
+	100% { background-image: url('images/mario3.png');}
+}
+@-webkit-keyframes background{
+	from {background-position: 0 ,0}
+	to {background-position: -960px,0}
+}
+@-webkit-keyframes bullet-bill {
+	0% { background-image: url('images/bullet-bill1.png');}
+	50% { background-image: url('images/bullet-bill2.png');}
+	100% { background-image: url('images/bullet-bill3.png');}
+}
+@-webkit-keyframes coin {
+	0% { background-image: url('images/coin1.png');}
+	33% { background-image: url('images/coin2.png');}
+	66% { background-image: url('images/coin3.png');}
+	100% { background-image: url('images/coin4.png');}
+}
+
 body{
 	margin: 0;
 	overflow: hidden;
@@ -54,7 +77,6 @@ body{
 }
 .walking-right{
 	-webkit-animation: walking 500ms steps(1, end)  infinite;
-
 }
 .walking-left{
 	transform: scaleX(-1);
@@ -80,22 +102,15 @@ body{
 	-webkit-animation: bullet-bill 500ms steps(1, end)  infinite;
 	z-index: 98;
 }
-@-webkit-keyframes walking {
-		0% { background-image: url('images/mario2.png');}
-		33% { background-image: url('images/mario3.png');}
-		66% { background-image: url('images/mario4.png');}
-		100% { background-image: url('images/mario3.png');}
+.coin{
+	height: 24px;
+	width: 24px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 97;
+	-webkit-animation: coin 500ms steps(2, end)  infinite;
 }
-@-webkit-keyframes background{
-	from {background-position: 0 ,0}
-	to {background-position: -960px,0}
-}
-@-webkit-keyframes bullet-bill {
-		0% { background-image: url('images/bullet-bill1.png');}
-		50% { background-image: url('images/bullet-bill2.png');}
-		100% { background-image: url('images/bullet-bill3.png');}
-}
-
 #plateforme1{
 	width: 150px;
 	height: 5px;
