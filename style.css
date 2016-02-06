@@ -48,21 +48,27 @@ body{
 	height: 100vh;
 	-webkit-animation: background 30s linear infinite;
 }
-#score{
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	background-image: url('images/score.png');
-	background-repeat: no-repeat;
-	height: 100px;
-	width: 100px;
-}
 #timer{
 	position: absolute;
 	top: 20px;
 	right: 20px;
 	height: 50px;
 	width: 200px;
+}
+#lives{
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	font-size: 45px;
+}
+#counter{
+	margin-left: -15px;
+}
+#coins{
+	position: absolute;
+	top: 100px;
+	left: 20px;
+	font-size: 45px;	
 }
 #sol{
 	position: absolute;
