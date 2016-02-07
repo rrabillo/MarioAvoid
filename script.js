@@ -10,10 +10,6 @@ coin = [];
 function generatePos(min , max){
 	return Math.floor(Math.random() * (max - min)) + min;
 }
-function getRandomInt(min, max) {
-  	/*console.log(Math.floor(Math.random() * (max - min)) + min);*/
-}
-
 function prepareObstacle(){
 	for(obstacleId = 0; obstacleId < document.getElementsByClassName('bullet-bill').length; obstacleId++){
 		pos = generatePos(sol.offsetTop -10 , sol.offsetTop-50);
@@ -38,6 +34,11 @@ function obstacleMove(){
 		}
 	}
 }
+function removeObject(element){
+	element.each(function(){
+		$(this).remove();
+	});
+}
 zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
 	this.sol = ground;
@@ -45,6 +46,7 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 	this.height = selector.offsetHeight;
 	this.touched = true; // Variable pour détecter les collisions (empéche de décrémenter la vie tant qu'on est en collision)
 	this.touchedCoins = true;
+	this.music = document.getElementById('audio-bg');
 	zoneDeJeu.prototype.gravity = function(){				
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
@@ -77,6 +79,9 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 					}
 					else{ // La première fois qu'on le touche, on enlève une vie.
 						object.life -= 1;
+						if (object.life >= 1) {
+							document.getElementById("audio-hited").play();
+						}
 						this.touched  = false; // Et on remet touched à false pour empêcher que la vie se décremente tant qu'on touche l'objet
 					}
 				}
@@ -93,15 +98,17 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 				elRight = elLeft + elwidth,
 				elBottom = elTop + elheight;
 				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){ // Détection de la collision
-					if(this.touchedCoins  === false){ // On regarde tout d'abords si on a déjà touché un obstacle
+					if(this.touchedCoins  === false){ // On regarde tout d'abords si on a déjà touché une piece
 					}
-					else{ // La première fois qu'on le touche, on enlève une vie.
+					else{ // La première fois qu'on le touche, on ajoute une piece.
 						object.coins +=1;
-						this.touchedCoins  = false; // Et on remet touched à false pour empêcher que la vie se décremente tant qu'on touche l'objet
+						document.getElementById("audio-coin").play();
+						this.touchedCoins  = false; // Et on remet touched à false pour empêcher que les pieces s'incrémentent tant qu'on touche l'objet
+						coin[i].posX = 0; // La pièce a été récupérée, elle disparait de l'écran de jeu
 					}
 				}
 				else{
-					this.touchedCoins = true; // Quand on ne touche plus l'objet, on réinitialise à true, pour le prochain objet rencontré
+					this.touchedCoins = true; // Quand on ne touche plus la piece, on réinitialise à true, pour le prochain objet rencontré
 				}
 				
 			}
@@ -166,6 +173,7 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	}
 	joueur.prototype.jump = function(){
 		if(key.up === true && this.falling == false){
+				document.getElementById('audio-jump').play();
 				this.pressJump++;
 				if(this.reverse){
 					this.htmlElement.className = ('jump reverse');	
@@ -195,8 +203,8 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	}
 	underPhysics.push(this);
 	joueur.prototype.lose = function(){
-		if(this.life <= 0){
-			pauseGame($('body'));
+		if(this.life <= 4){
+			losegame($('body'));
 		}
 	}
 }
@@ -220,6 +228,9 @@ function keyDown(e) {
     if (e.keyCode === 38) {
         key.up = true;
     }
+    if (e.keyCode === 32) {
+        pauseGame();
+    }
 }
 
 function keyUp(e) {
@@ -232,14 +243,11 @@ function keyUp(e) {
         key.up = false;
     }
     if (e.keyCode === 32){
-       	
+       	key.bar = false;
     }
 }
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
-
-	mario.jump();
-
 function prepareCoin(){
 	for(coinId = 0; coinId < document.getElementsByClassName('coin').length; coinId++){
 		pos = generatePos(sol.offsetTop -80 , sol.offsetTop -140);
@@ -264,47 +272,56 @@ function coinMove(){
 		}
 	}
 }
-function pauseGame(element){
-	if(element.hasClass('paused')){
-		element.removeClass('paused');
+function pauseGame(){
+	if($('body').hasClass('paused')){
+		$('body').removeClass('paused');
 		gameloop=setInterval(loop,15);
 	}
 	else{
-		element.addClass('paused');
+		$('body').addClass('paused');
+		area.music.pause()
+		document.getElementById("audio-pause").play();
 		clearInterval(gameloop);
 	}
 }
+function losegame(element){ // On met en pause et on reset tous les objets et arrays.
+	area.music.pause()
+	document.getElementById('audio-gameover').play();
+	element.addClass('gameover');
+	clearInterval(gameloop);
+	delete mario;
+	delete area;
+	underPhysics = [];
+	obstacle = [];
+	coin = [];
+}
+function restartGame(){
+	removeObject($('.bullet-bill'));
+	removeObject($('.coin'));
+	$('body').removeClass('gameover');
+	mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
+	area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
+	area.music.load();
+	addCoin();
+	addObstacle();
+	gameloop=setInterval(loop,15);
+}
 // Il est nécéssaire de créer une loop pour que les fonctions soient lancées constamment
 function loop(){	
+	area.music.play();
 	obstacleMove()
 	area.collisions();
 	area.gravity();
 	mario.move();
 	mario.lose();
 	coinMove();
+
 }
  gameloop = setInterval(loop,15);
 
 
-$('body').click(function(){ // Fonction de pause
-	pauseGame($(this));
+$('#retry').click(function(){
+	restartGame();
 });
-
-
-/*var secon=0,
-	minu=0;
-
-function chrono(){
-
-	secon++;
-
-	if (secon>59){ secon=0; minu++ } 
-
-	document.getElementById('seconde').innerHTML = ""+secon;
-	document.getElementById('minute').innerHTML = ""+minu;
-	compte = setTimeout('chrono()',1000);
-}
-chrono();*/
-
 
 });
