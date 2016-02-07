@@ -3,10 +3,20 @@ $(document).ready(function(){
 
 // Construction de la logique 
 
+/*****************************************
+*										 *
+*										 *
+*										 *
+*			Mécaniques du jeu		 	 *
+*										 *
+*										 *
+*										 *
+*										 *
+******************************************/
 
 var underPhysics = []; // Création d'un array qui contiendra les objets soumis à la gravité
-obstacle = [];
-coin = [];
+obstacle = []; // Contiendra les ennemis visibles à l'écran
+coin = []; // Contiendra les pièces visibles à l'écran
 function generatePos(min , max){
 	return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -33,11 +43,46 @@ function obstacleMove(){
 		}
 	}
 }
-function removeObject(element){
+function prepareCoin(){
+	for(coinId = 0; coinId < document.getElementsByClassName('coin').length; coinId++){
+		pos = generatePos(sol.offsetTop -80 , sol.offsetTop -140);
+		coin[coinId] = {id: coinId, selector : document.getElementsByClassName('coin')[coinId ] , width : document.getElementsByClassName('coin')[coinId].offsetWidth , 
+		height : document.getElementsByClassName('coin')[coinId].offsetHeight , posY : pos , posX : document.getElementsByClassName('coin')[coinId].offsetLeft};
+	}
+}
+function addCoin(){
+		$('body').append('<div class="coin"></div>');
+		prepareCoin();
+}
+function coinMove(){
+	for(i = 0; i < coin.length; i++){
+		coin[i].posX -=5;
+		coin[i].selector.style.top =  coin[i].posY+"px"; 
+		coin[i].selector.style.left = coin[i].posX+"px";
+		if(coin[i].posX <= area.htmlElement.offsetLeft){
+			coin[i].selector.parentNode.removeChild(coin[i].selector);
+			coin = [];
+			addCoin();		
+		}
+	}
+}
+function removeObject(element){ // Fonction qui permet de supprimer les obstacles et les pièces quand on perd le jeu et qu'on restart
 	element.each(function(){
 		$(this).remove();
-	});
+	}); 
 }
+/*****************************************
+*										 *
+*										 *
+*										 *
+*			Objets du jeu		 		 *
+*										 *
+*										 *
+*										 *
+*										 *
+******************************************/
+
+
 zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
 	this.sol = ground;
@@ -208,7 +253,16 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 		}
 	}
 }
-// Contrôles
+/*****************************************
+*										 *
+*										 *
+*										 *
+*				Contrôles		 		 *
+*										 *
+*										 *
+*										 *
+*										 *
+******************************************/
 var key  = { // On créé un objet clef qui permettra d'enregistrer de détecter si une touche est enfoncée ou non (et la détection de plusieurs touches enfoncées)
 	left:false,
 	right:false,
@@ -244,29 +298,31 @@ function keyUp(e) {
 }
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
-function prepareCoin(){
-	for(coinId = 0; coinId < document.getElementsByClassName('coin').length; coinId++){
-		pos = generatePos(sol.offsetTop -80 , sol.offsetTop -140);
-		coin[coinId] = {id: coinId, selector : document.getElementsByClassName('coin')[coinId ] , width : document.getElementsByClassName('coin')[coinId].offsetWidth , 
-		height : document.getElementsByClassName('coin')[coinId].offsetHeight , posY : pos , posX : document.getElementsByClassName('coin')[coinId].offsetLeft};
-	}
+
+/*****************************************
+*										 *
+*										 *
+*										 *
+*		Contrôles de la game loop		 *
+*		(start, pause, lose etc...)		 *
+*										 *
+*										 *
+*										 *
+******************************************/
+
+function startGame(){
+	$('#menu').hide();
+	$('#personnage').css({'display':'inline-block'});
+	$('#lives').show();
+	$('#coins').show();
+	mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
+	area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
+	addCoin();
+	addObstacle();
+	gameloop = setInterval(loop,15);
+
 }
-function addCoin(){
-		$('body').append('<div class="coin"></div>');
-		prepareCoin();
-}
-function coinMove(){
-	for(i = 0; i < coin.length; i++){
-		coin[i].posX -=5;
-		coin[i].selector.style.top =  coin[i].posY+"px"; 
-		coin[i].selector.style.left = coin[i].posX+"px";
-		if(coin[i].posX <= area.htmlElement.offsetLeft){
-			coin[i].selector.parentNode.removeChild(coin[i].selector);
-			coin = [];
-			addCoin();		
-		}
-	}
-}
+
 function pauseGame(){
 	if($('body').hasClass('paused')){
 		$('body').removeClass('paused');
@@ -311,18 +367,6 @@ function loop(){
 	area.gravity();
 	mario.move();
 	mario.lose();
-}
-function startGame(){
-	$('#menu').hide();
-	$('#personnage').css({'display':'inline-block'});
-	$('#lives').show();
-	$('#coins').show();
-	mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
-	area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
-	addCoin();
-	addObstacle();
-	gameloop = setInterval(loop,15);
-
 }
 
 $('#retry').click(function(){
