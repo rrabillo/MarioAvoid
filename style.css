@@ -32,6 +32,14 @@
 	66% { background-image: url('images/coin3.png');}
 	100% { background-image: url('images/coin4.png');}
 }
+@-webkit-keyframes smallToBig{
+    from {
+        -webkit-transform: scale(0.1);
+    }
+    to {
+        -webkit-transform: scale(1);
+    }
+}
 
 body{
 	font-family: 'superMario';
@@ -140,4 +148,49 @@ body{
 	position: absolute;
 	bottom: 50px;
 	left: 50%;
+}
+#menu{
+	position: absolute;
+	width: 500px;
+	top: 20%;
+	left: 50%;
+	margin-left: -250px;
+	text-align: center;
+}
+figure{
+	width: 500px;
+	margin: 10px 0 45px;
+}
+#menu p{
+	text-align: center;
+	font-size: 2em;	
+	padding: 7px 60px;
+	margin: 0;
+}
+#menu #start{
+	height: 45px;
+	width: 290px;
+	margin: auto;
+	border-radius: 5px;
+	background: #ffb032; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffb032 0%, #ffff32 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  #ffb032 0%,#ffff32 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  #ffb032 0%,#ffff32 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffb032', endColorstr='#ffff32',GradientType=0 ); /* IE6-9 */
+
+	transition: all 300ms linear;
+}
+#menu #start:hover{
+	cursor: pointer;
+
+	-webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+
+    border: 2px solid #000;    
+}
+#menu #start:hover p{
+	-webkit-animation: smallToBig 700ms ease;
 }
