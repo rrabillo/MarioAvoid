@@ -119,7 +119,7 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
 	this.height = selector.offsetHeight;
-	this.life = 5;
+	this.life = 3;
 	this.coins = 0;
 	this.velocity = speed;
 	this.collision = false;
@@ -203,6 +203,7 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	underPhysics.push(this);
 	joueur.prototype.lose = function(){
 		if(this.life <= 0){
+			this.htmlElement.className = 'die';
 			losegame($('body'));
 		}
 	}

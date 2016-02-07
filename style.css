@@ -39,6 +39,10 @@
     from { -webkit-transform: scale(0.1); }
     to { -webkit-transform: scale(1); }
 }
+@-webkit-keyframes die{
+    from { top:836px; }
+    to { top:110%; }
+}
 body{
 	font-family: 'superMario';
     -webkit-text-stroke-color: black;
@@ -146,6 +150,12 @@ body{
 }
 #personnage.jump{
 	background-image: url('images/mario5.png');	
+}
+#personnage.die{
+	background-image: url('images/mario-die.png');
+	width: 38px;
+	-webkit-animation: die 1s linear;
+  	-webkit-animation-fill-mode: forwards;
 }
 #personnage.fall{
 	background-image:url('images/mario6.png');
