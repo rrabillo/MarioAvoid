@@ -88,6 +88,7 @@ body{
 	width: 200px;
 }
 #lives{
+	display: none;
 	position: absolute;
 	top: 20px;
 	left: 20px;
@@ -97,6 +98,7 @@ body{
 	margin-left: -15px;
 }
 #coins{
+	display: none;
 	position: absolute;
 	top: 100px;
 	left: 20px;
@@ -126,7 +128,7 @@ body{
 	background-repeat: no-repeat;
 	position: relative;
 	bottom: 0;
-	display: inline-block;
+	display: none;
 	z-index: 99;
 }
 .walking-right{

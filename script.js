@@ -21,7 +21,6 @@ function addObstacle(){
 		$('body').append('<div class="bullet-bill"></div>');
 		prepareObstacle();
 }
-addObstacle();
 function obstacleMove(){
 	for(i = 0; i < obstacle.length; i++){
 		obstacle[i].posX -=10;
@@ -203,15 +202,11 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 	}
 	underPhysics.push(this);
 	joueur.prototype.lose = function(){
-		if(this.life <= 4){
+		if(this.life <= 0){
 			losegame($('body'));
 		}
 	}
 }
-
-mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
-area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
-
 // Contrôles
 var key  = { // On créé un objet clef qui permettra d'enregistrer de détecter si une touche est enfoncée ou non (et la détection de plusieurs touches enfoncées)
 	left:false,
@@ -259,7 +254,6 @@ function addCoin(){
 		$('body').append('<div class="coin"></div>');
 		prepareCoin();
 }
-addCoin();
 function coinMove(){
 	for(i = 0; i < coin.length; i++){
 		coin[i].posX -=5;
@@ -306,22 +300,35 @@ function restartGame(){
 	addObstacle();
 	gameloop=setInterval(loop,15);
 }
+
 // Il est nécéssaire de créer une loop pour que les fonctions soient lancées constamment
-function loop(){	
+function loop(){
 	area.music.play();
 	obstacleMove()
+	coinMove();
 	area.collisions();
 	area.gravity();
 	mario.move();
 	mario.lose();
-	coinMove();
+}
+function startGame(){
+	$('#menu').hide();
+	$('#personnage').css({'display':'inline-block'});
+	$('#lives').show();
+	$('#coins').show();
+	mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
+	area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
+	addCoin();
+	addObstacle();
+	gameloop = setInterval(loop,15);
 
 }
- gameloop = setInterval(loop,15);
-
 
 $('#retry').click(function(){
 	restartGame();
+});
+$('#start').click(function(){
+	startGame();
 });
 
 });
