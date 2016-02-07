@@ -38,13 +38,13 @@ function obstacleMove(){
 		}
 	}
 }
-
 zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu", qui nous permettra notamment de détecter certaines colisions (gauche et droite du viewport) et eclenche la gravité
 	this.htmlElement = selector;
 	this.sol = ground;
 	this.leftBorder = selector.offsetLeft;	
 	this.height = selector.offsetHeight;
-	this.touched = true;
+	this.touched = true; // Variable pour détecter les collisions (empéche de décrémenter la vie tant qu'on est en collision)
+	this.touchedCoins = true;
 	zoneDeJeu.prototype.gravity = function(){				
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
@@ -62,7 +62,7 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 			}
 		}
 	}
-	zoneDeJeu.prototype.collisions = function(){
+	zoneDeJeu.prototype.collisions = function(){ // On pourrait, je pense, largement améliorer cette partie, mais manque de temps...
 		for(i = 0; i < underPhysics.length; i++){
 			var object = underPhysics[i];
 			for(i = 0; i < obstacle.length; i++){
@@ -72,45 +72,49 @@ zoneDeJeu = function(selector , ground){// Définition d'un objet "zone de jeu",
 				elLeft = obstacle[i].posX,
 				elRight = elLeft + elwidth,
 				elBottom = elTop + elheight;
-				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){
-					if(this.touched  === false){
+				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){ // Détection de la collision
+					if(this.touched  === false){ // On regarde tout d'abords si on a déjà touché un obstacle
 					}
-					else{
+					else{ // La première fois qu'on le touche, on enlève une vie.
 						object.life -= 1;
-						this.touched  = false;
+						this.touched  = false; // Et on remet touched à false pour empêcher que la vie se décremente tant qu'on touche l'objet
 					}
 				}
 				else{
-					this.touched = true;
+					this.touched = true; // Quand on ne touche plus l'objet, on réinitialise à true, pour le prochain objet rencontré
 				}
 				
 			}
-		}console.log(object.life);	
+			for(i = 0; i < coin.length; i++){
+				var elwidth = coin[i].width,
+				elheight = coin[i].height,
+				elTop = coin[i].posY,
+				elLeft = coin[i].posX,
+				elRight = elLeft + elwidth,
+				elBottom = elTop + elheight;
+				if(elLeft < object.pos.x + object.width && elRight > object.pos.x && elTop < object.pos.y + object.height && elBottom > object.pos.y){ // Détection de la collision
+					if(this.touchedCoins  === false){ // On regarde tout d'abords si on a déjà touché un obstacle
+					}
+					else{ // La première fois qu'on le touche, on enlève une vie.
+						object.coins +=1;
+						this.touchedCoins  = false; // Et on remet touched à false pour empêcher que la vie se décremente tant qu'on touche l'objet
+					}
+				}
+				else{
+					this.touchedCoins = true; // Quand on ne touche plus l'objet, on réinitialise à true, pour le prochain objet rencontré
+				}
+				
+			}
+		}	
 	}
 }
-	
-/*obstacle = function(selector){
-	this.status = true; // Si l'objet a disparu ou non
-	this.htmlElement = selector;
-	for(i = 0; i < selector.length; i++){
-		this.height = selector[i].offsetHeight;
-		this.width = selector[i].offsetWidth;
-	}
-	this.pos = {x : area.htmlElement.offsetWidth - this.width , y : area.sol.offsetTop - 15}; 
-	obstacle.prototype.move = function(){
-		this.pos.x -= 5;
-		this.htmlElement[0].style.top = this.pos.y+"px";
-		this.htmlElement[0].style.left = this.pos.x+"px";
-		if(this.pos.x <= area.leftBorder){
-		}
-	}
 
-} */
 joueur = function(selector , speed ){ // Définition d'un objet joueur
 	this.htmlElement = selector;
 	this.width = selector.offsetWidth;
 	this.height = selector.offsetHeight;
 	this.life = 5;
+	this.coins = 0;
 	this.velocity = speed;
 	this.collision = false;
 	this.pos = {x : 0 , y : 0};
@@ -157,6 +161,8 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
     		}
     	}
     	this.htmlElement.style.left = this.pos.x+"px";
+    	document.getElementById('counter').innerHTML = this.life;
+    	document.getElementById('coin_count').innerHTML = this.coins;
 	}
 	joueur.prototype.jump = function(){
 		if(key.up === true && this.falling == false){
@@ -188,14 +194,16 @@ joueur = function(selector , speed ){ // Définition d'un objet joueur
 		}
 	}
 	underPhysics.push(this);
-
+	joueur.prototype.lose = function(){
+		if(this.life <= 0){
+			pauseGame($('body'));
+		}
+	}
 }
 
 mario = new joueur(document.getElementById("personnage") ,7); // Création du joueur
 area = new zoneDeJeu(document.body , document.getElementById("sol")); // Notre zone est le body.
-/*
-bulletbill = new obstacle(document.getElementsByClassName("bullet-bill"));
-*/
+
 // Contrôles
 var key  = { // On créé un objet clef qui permettra d'enregistrer de détecter si une touche est enfoncée ou non (et la détection de plusieurs touches enfoncées)
 	left:false,
@@ -256,27 +264,30 @@ function coinMove(){
 		}
 	}
 }
-
+function pauseGame(element){
+	if(element.hasClass('paused')){
+		element.removeClass('paused');
+		gameloop=setInterval(loop,15);
+	}
+	else{
+		element.addClass('paused');
+		clearInterval(gameloop);
+	}
+}
 // Il est nécéssaire de créer une loop pour que les fonctions soient lancées constamment
 function loop(){	
 	obstacleMove()
 	area.collisions();
 	area.gravity();
 	mario.move();
+	mario.lose();
 	coinMove();
 }
  gameloop = setInterval(loop,15);
 
 
 $('body').click(function(){ // Fonction de pause
-	if($(this).hasClass('paused')){
-		$(this).removeClass('paused');
-		gameloop=setInterval(loop,15);
-	}
-	else{
-		$(this).addClass('paused');
-		clearInterval(gameloop);
-	}
+	pauseGame($(this));
 });
 
 
