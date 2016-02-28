@@ -1,2 +1,2 @@
 # Mario game (avoid ennemies)
-Interactive animation (its more like becoming a game now) made for school
+Game made for school (can be full of bugs, feel free to fork it ! )
