@@ -1,4 +1,3 @@
-// J'avoue on a été voir sur internet pour voir un peu comment ça fonctionne, mais nous avons plutôt compris, notamment la game loop et les évènements keyboard multiples
 $(document).ready(function(){
 
 // Construction de la logique 
